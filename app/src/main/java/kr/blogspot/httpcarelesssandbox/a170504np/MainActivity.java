@@ -19,15 +19,22 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     EditText et;
     WebView webView;
     Animation animTop;
     LinearLayout linear;
+    ListView listView;
+    ArrayList<String> data=new ArrayList<String>();
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.webview);
 
         et = (EditText) findViewById(R.id.et);
-
+        listView=(ListView)findViewById(R.id.listlay);
+        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,data);
+        listView.setAdapter(adapter);
         webView = (WebView) findViewById(R.id.webview);
         linear = (LinearLayout) findViewById(R.id.linear);
 
@@ -83,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                dialog.setMessage("Loading.......");
+                dialog.setMessage("Loading......");
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.show();
             }
@@ -129,13 +138,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0,1,0,"즐겨찾기");
+        menu.add(0,1,0,"즐겨찾기 추가");
+        menu.add(0,2,0,"즐겨찾기 목록");
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==1)
+        {
+            webView.loadUrl("file:///android_asset/urladd.html");
+            linear.setAnimation(animTop);
+            animTop.start();
+        }
+        if(item.getItemId()==2)
         {
             webView.loadUrl("file:///android_asset/index.html");
             linear.setAnimation(animTop);
@@ -155,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     AlertDialog.Builder dlg=new AlertDialog.Builder(MainActivity.this);
                     dlg.setTitle("그림변경")
-                            .setMessage("그림변경할꺼?")
+                            .setMessage("그림을 변경하시겠습니까?")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
